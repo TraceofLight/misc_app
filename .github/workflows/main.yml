@@ -49,7 +49,7 @@ jobs:
   deploy:
     needs: build
     name: Deploy
-    runs-on: [ self-hosted, label-action-runner ]
+    runs-on: [ self-hosted, action-runner ]
     steps:
       - name: Login to ghcr
         uses: docker/login-action@v1
@@ -60,5 +60,5 @@ jobs:
       
       - name: Docker run
         run: |
-          sudo docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
-          sudo docker run -d -p 8000:8000 --name fast-api-container --restart always ${{ env.DOCKER_IMAGE }}:latest
+          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 8000:8000 --name fast-api-container --restart always ${{ env.DOCKER_IMAGE }}:latest
