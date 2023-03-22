@@ -6,7 +6,7 @@ on:
 
 env:
   OWNER: '${{ github.repository_owner }}'
-  DOCKER_IMAGE: ghcr.io/traceoflight/fast-api-container
+  DOCKER_IMAGE: ghcr.io/{{ secrets.ACTOR }}/fast-api-container
   VERSION: ${{ github.sha }}
   NAME: fast-api-container
 
