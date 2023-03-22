@@ -5,7 +5,8 @@ on:
     branches: [ main ]
 
 env:
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/fast-api-container
+  OWNER: '${{ github.repository_owner }}'
+  DOCKER_IMAGE: ghcr.io/${{ secrets.ACTOR }}/fast-api-container
   VERSION: ${{ github.sha }}
   NAME: fast-api-container
 
@@ -32,7 +33,7 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ secrets.ACTOR }}
           password: ${{ secrets.PROJECT_TOKEN }}
         
       - name: Build and push
