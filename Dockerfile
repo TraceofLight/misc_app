@@ -2,7 +2,7 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
 # 작업 디렉토리 생성 및 설정
-WORKDIR /app
+WORKDIR /
 
 # 필요한 라이브러리 및 패키지 설치
 COPY requirements.txt .
