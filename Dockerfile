@@ -1,5 +1,5 @@
 # Docker 이미지 생성을 위한 베이스 이미지 설정
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9.13
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
 # 작업 디렉토리 생성 및 설정
 WORKDIR /app
