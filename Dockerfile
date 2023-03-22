@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # 소스코드 복사
-COPY ./app /app
+COPY ./ /
 
 # 컨테이너가 실행될 때 실행할 명령어 설정
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
