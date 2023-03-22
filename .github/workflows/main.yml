@@ -7,7 +7,7 @@ on:
 env:
   OWNER: '${{ github.repository_owner }}'
   DOCKER_IMAGE: ghcr.io/{{ secrets.ACTOR }}/fast-api-container
-  VERSION: ${{ github.sha }}
+  VERSION: ${{ github.sha }} 
   NAME: fast-api-container
 
 jobs:
