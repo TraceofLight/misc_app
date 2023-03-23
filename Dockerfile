@@ -6,7 +6,7 @@ WORKDIR /
 
 # 필요한 라이브러리 및 패키지 설치
 COPY requirements.txt .
-RUN set -x && pip install -r requirements.txt | tee /tmp/pip_install.log
+RUN pip install -r requirements.txt
 
 # 소스코드 복사
 COPY . ./app
