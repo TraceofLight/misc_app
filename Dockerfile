@@ -15,4 +15,4 @@ RUN pip install -r requirements.txt
 COPY . ./app
 
 # 컨테이너가 실행될 때 실행할 명령어 설정
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
