@@ -29,7 +29,7 @@ def make_result_with_model(image_path):
 
 async def get_image(file: UploadFile):
 
-    with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as tmp_file
+    with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as tmp_file:
         tmp_file.write(await file.read())
         tmp_file.flush()
         tmp_file.seek(0)
