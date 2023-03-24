@@ -48,3 +48,7 @@ async def make_image(file: UploadFile):
     img_byte = make_result_with_model(get_image(file))
 
     return Response(content=img_byte.numpy(), media_type="image/jpeg")
+
+@app.get("/")
+async def hello_world():
+    return Response("hello, world")
