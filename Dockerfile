@@ -1,8 +1,9 @@
 FROM debian
-RUN apt-get update && apt-get install -y python3-dev python3-pip
+RUN apt-get update && 
+RUN apt-get install -y python3-dev python3-pip
 
 # 작업 디렉토리 생성 및 설정
-WORKDIR /
+WORKDIR /app
 
 RUN apt-get install python3-dev python3-pip
 RUN pip install tensorflow==2.10.0
@@ -15,4 +16,4 @@ RUN pip install -r requirements.txt
 COPY . ./app
 
 # 컨테이너가 실행될 때 실행할 명령어 설정
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
