@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM debian
 RUN apt-get update
 RUN apt-get install -y python3-dev python3-pip
 
@@ -7,6 +7,7 @@ WORKDIR /
 
 RUN apt-get install python3-dev python3-pip
 RUN pip install tensorflow==2.10.0
+RUN pip install pypi_files/watchfiles-0.0.0-cp37-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.whl
 
 # 필요한 라이브러리 및 패키지 설치
 COPY requirements.txt .
