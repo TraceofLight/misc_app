@@ -7,14 +7,13 @@ WORKDIR /
 
 RUN apt-get install python3-dev python3-pip
 RUN pip install tensorflow==2.10.0
-RUN pip install pypi_files/watchfiles-0.0.0-cp37-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.whl
 
 # 필요한 라이브러리 및 패키지 설치
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # 소스코드 복사
-COPY . .
+# COPY . .
 
 # 컨테이너가 실행될 때 실행할 명령어 설정
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
