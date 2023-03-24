@@ -10,10 +10,10 @@ from PIL import Image
 
 app = FastAPI()
 
-my_model = tf.keras.models.load_model("model")
+my_model = tf.keras.models.load_model("core/model")
 
-def make_result_with_model(image_path):
-    content_image = plt.imread(image_path)
+def make_result_with_model():
+    content_image = plt.imread("asset/profile.jpg")
     style_image = plt.imread("asset/target.jpg")
     content_image = content_image.astype(np.float32)[np.newaxis, ...] / 255.
     style_image = style_image.astype(np.float32)[np.newaxis, ...] / 255.
@@ -45,7 +45,7 @@ async def get_image(file: UploadFile):
 
 @app.post("/makeImage")
 async def make_image(file: UploadFile):
-    img_byte = make_result_with_model(get_image(file))
+    img_byte = make_result_with_model()
 
     return Response(content=img_byte.numpy(), media_type="image/jpeg")
 
