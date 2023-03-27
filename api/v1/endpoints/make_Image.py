@@ -35,7 +35,7 @@ def make_result_with_model(path: Path) -> any:
     '''
 
     content_image = plt.imread(path)
-    style_image = plt.imread(f'{BASE_DIR}/asset/target.jpg')
+    style_image = plt.imread(f'{BASE_DIR}/assets/target.jpg')
     content_image = content_image.astype(np.float32)[np.newaxis, ...] / 255.
     style_image = style_image.astype(np.float32)[np.newaxis, ...] / 255.
     style_image = tf.image.resize(style_image, (256, 256))
