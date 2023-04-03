@@ -21,22 +21,22 @@ router = APIRouter()
 detector = hub.load('core/tf_model').signatures['default']
 
 lower_group = ['Tortoise', 'Magpie', 'Sea turtle', 'Human eye', 'Bird', 'Doll', 'Tick', 'Boy', 'Bear', 'Brown bear',
-               'Woodpecker', 'Blue jay', 'Person', 'Bee', 'Bat', 'Popcorn', 'Carnivore', 'Cattle', 'Camel', 'Coat',
-               'Suit', 'Cat', 'Bronze sculpture', 'Beetle', 'Fountain', 'Human mouth', 'Dinosaur', 'Ratchet', 'Scarf',
-               'Dolphin', 'Mug', 'Human body', 'Food', 'Fruit', 'Fox', 'Human foot', 'Human leg', 'Isopod', 'Grape',
-               'Human ear', 'Panda', 'Giraffe', 'Woman', 'Rhinoceros', 'Goldfish', 'Goat', 'Marine invertebrates',
-               'Horse', 'Hamster', 'Insect', 'Jaguar', 'Kangaroo', 'Koala', 'Lynx', 'Lavender', 'Human head', 'Lizard',
-               'Mammal', 'Mouse', 'Bust', 'Man', 'Mushroom', 'Pitcher', 'Ostrich', 'Girl', 'Plant', 'Penguin',
-               'Polar bear', 'Pig', 'Reptile', 'Raven', 'Red panda', 'Rose', 'Rabbit', 'Sculpture', 'Squirrel',
-               'Scorpion', 'Snake', 'Sheep', 'Tiger', 'Strawberry', 'Tree', 'Tomato', 'Worm', 'Whale', 'Zebra',
-               'Monkey', 'Lion', 'Chicken', 'Eagle', 'Owl', 'Duck', 'Turtle', 'Hippopotamus', 'Crocodile', 'Squid',
-               'Spider', 'Deer', 'Frog', 'Dog', 'Elephant', 'Shark', 'Leopard', 'Porcupine', 'Flower', 'Canary',
-               'Cheetah', 'Palm tree', 'Fish', 'Lobster', 'Hedgehog', 'Otter', 'Bull', 'Oyster', 'Butterfly',
-               'Antelope', 'Moths and butterflies', 'Jellyfish', 'Goose', 'Mule', 'Swan', 'Raccoon', 'Human face',
-               'Human arm', 'Falcon', 'Snail', 'Shellfish', 'Dragonfly', 'Sunflower', 'Marine mammal', 'Sea lion',
-               'Ladybug', 'Parrot', 'Sparrow', 'Kitchen & dining room table', 'Dog bed', 'Cat furniture', 'Animal',
-               'Turkey', 'Lily', 'Human nose', 'Ant', 'Human hand', 'Skunk', 'Teddy bear', 'Shrimp', 'Crab', 'Seahorse',
-               'Alpaca', 'Armadillo']
+                'Woodpecker', 'Blue jay', 'Person', 'Bee', 'Bat', 'Popcorn', 'Carnivore', 'Cattle', 'Camel', 'Coat',
+                'Suit', 'Cat', 'Bronze sculpture', 'Beetle', 'Fountain', 'Human mouth', 'Dinosaur', 'Ratchet', 'Scarf',
+                'Dolphin', 'Mug', 'Human body', 'Food', 'Fruit', 'Fox', 'Human foot', 'Human leg', 'Isopod', 'Grape',
+                'Human ear', 'Panda', 'Giraffe', 'Woman', 'Rhinoceros', 'Goldfish', 'Goat', 'Marine invertebrates',
+                'Horse', 'Hamster', 'Insect', 'Jaguar', 'Kangaroo', 'Koala', 'Lynx', 'Lavender', 'Human head', 'Lizard',
+                'Mammal', 'Mouse', 'Bust', 'Man', 'Mushroom', 'Pitcher', 'Ostrich', 'Girl', 'Plant', 'Penguin',
+                'Polar bear', 'Pig', 'Reptile', 'Raven', 'Red panda', 'Rose', 'Rabbit', 'Sculpture', 'Squirrel',
+                'Scorpion', 'Snake', 'Sheep', 'Tiger', 'Strawberry', 'Tree', 'Tomato', 'Worm', 'Whale', 'Zebra',
+                'Monkey', 'Lion', 'Chicken', 'Eagle', 'Owl', 'Duck', 'Turtle', 'Hippopotamus', 'Crocodile', 'Squid',
+                'Spider', 'Deer', 'Frog', 'Dog', 'Elephant', 'Shark', 'Leopard', 'Porcupine', 'Flower', 'Canary',
+                'Cheetah', 'Palm tree', 'Fish', 'Lobster', 'Hedgehog', 'Otter', 'Bull', 'Oyster', 'Butterfly',
+                'Antelope', 'Moths and butterflies', 'Jellyfish', 'Goose', 'Mule', 'Swan', 'Raccoon', 'Human face',
+                'Human arm', 'Falcon', 'Snail', 'Shellfish', 'Dragonfly', 'Sunflower', 'Marine mammal', 'Sea lion',
+                'Ladybug', 'Parrot', 'Sparrow', 'Kitchen & dining room table', 'Dog bed', 'Cat furniture', 'Animal',
+                'Turkey', 'Lily', 'Human nose', 'Ant', 'Human hand', 'Skunk', 'Teddy bear', 'Shrimp', 'Crab', 'Seahorse',
+                'Alpaca', 'Armadillo']
 
 
 @router.post("/api/v1/itsGrey/makeImage")
@@ -63,16 +63,21 @@ async def make_image(file: UploadFile):
         else:
             img = canny_edge_detection(img, 5, 50, 200)
 
+        pil_img = Image.fromarray(img)
+
         # 결과 파일 저장
-        result_image = random_img_filename()
-        cv2.imwrite(str(IMG_DIR / result_image), img)
+        result_image = random_img_filename('bmp')
+        pil_img.save(str(IMG_DIR / result_image))
+
+        # result_image = random_img_filename()
+        # cv2.imwrite(str(IMG_DIR / result_image), img)
         os.remove(target_image)
 
         # 결과 Response
         with open(str(IMG_DIR / result_image), 'rb') as image_file:
             result = image_file.read()
 
-            return Response(result, media_type='image/jpeg')
+            return Response(result, media_type='image/bmp')
     
     # 문제가 발생하면 임시 파일 전부 제거 후 500 Response
     except:
@@ -87,10 +92,10 @@ async def make_image(file: UploadFile):
 
 def get_image(file: UploadFile):
     '''
-    이미지를 BE에 저장하고 경로를 반환하는 함수
+    jpg 이미지를 BE에 저장하고 경로를 반환하는 함수
     '''
 
-    file_name = random_img_filename()
+    file_name = random_img_filename('jpg')
     local_path = IMG_DIR / file_name
 
     with open(local_path, 'wb') as file_object:
@@ -99,13 +104,13 @@ def get_image(file: UploadFile):
     return local_path
 
 
-def random_img_filename():
+def random_img_filename(file_type: str) -> str:
     '''
     난수를 활용한 이미지 파일 이름 생성 함수
     '''
 
     current_time = datetime.now().strftime('%Y%m%d%H%M%S')
-    name = f'{current_time}-{secrets.token_hex(16)}.jpg'
+    name = f'{current_time}-{secrets.token_hex(16)}.{file_type}'
 
     return name
 
