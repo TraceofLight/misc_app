@@ -4,8 +4,8 @@ RUN apt-get update
 # 작업 디렉토리 생성 및 설정
 WORKDIR /
 
-# Tensorflow 우선 설치
-RUN apt-get install -y python3-dev python3-pip libgl1-mesa-glx
+# Tensorflow 및 OpenGL 기반 소스 설치
+RUN apt-get install -y python3-dev python3-pip libgl1-mesa-glx libglib2.0-0
 RUN pip install tensorflow==2.10.0
 
 # 필요한 라이브러리 및 패키지 설치
