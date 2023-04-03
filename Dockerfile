@@ -5,9 +5,8 @@ RUN apt-get update
 WORKDIR /
 
 # Tensorflow 우선 설치
-RUN apt-get install -y python3-dev python3-pip
+RUN apt-get install -y python3-dev python3-pip libgl1-mesa-glx
 RUN pip install tensorflow==2.10.0
-RUN pip install opencv-python==4.7.0.72
 
 # 필요한 라이브러리 및 패키지 설치
 COPY requirements.txt .
