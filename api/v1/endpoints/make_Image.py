@@ -1,9 +1,10 @@
 from fastapi import Response, UploadFile, APIRouter, HTTPException
 
 import os
-import time
 import secrets
+# import time
 
+from math import ceil
 from pathlib import Path
 from datetime import datetime
 
@@ -50,34 +51,24 @@ async def make_image(file: UploadFile):
     '''
 
     try:
-        target_image = get_image(file) # 받은 이미지 경로
-        detect_img(detector, target_image) # 이미지 객체 탐색
-        detection_class_entities = res["detection_class_entities"] # 결과
+        target_image = get_image(file)
+        detect_img(detector, target_image)
 
         img = cv2.imread(str(target_image))
-        is_need_higher_threshold = select_threshold(detection_class_entities[0]) # Higher / Lower Group 반환
 
-        # 조건에 따라 Canny Edge Detection 사용
-        if is_need_higher_threshold:
-            img = canny_edge_detection(img, 5, 50, 100)
-        else:
-            img = canny_edge_detection(img, 5, 50, 200)
-
-        pil_img = Image.fromarray(img)
+        pil_img = Image.fromarray(canny_each_object(img))
 
         # 결과 파일 저장
         result_image = random_img_filename('bmp')
         pil_img.save(str(IMG_DIR / result_image))
 
-        # result_image = random_img_filename()
-        # cv2.imwrite(str(IMG_DIR / result_image), img)
         os.remove(target_image)
-
-        # 결과 Response
         with open(str(IMG_DIR / result_image), 'rb') as image_file:
             result = image_file.read()
+        os.remove(str(IMG_DIR / result_image))
 
-            return Response(result, media_type='image/bmp')
+        # 결과 Response
+        return Response(result, media_type='image/bmp')
     
     # 문제가 발생하면 임시 파일 전부 제거 후 500 Response
     except:
@@ -92,14 +83,24 @@ async def make_image(file: UploadFile):
 
 def get_image(file: UploadFile):
     '''
-    jpg 이미지를 BE에 저장하고 경로를 반환하는 함수
+    jpg, png 이미지를 BE에 저장하고 경로를 반환하는 함수
     '''
 
-    file_name = random_img_filename('jpg')
-    local_path = IMG_DIR / file_name
+    if file.filename.lower().endswith('png'):
+        file_name = random_img_filename('png')
+        local_path = IMG_DIR / file_name
 
-    with open(local_path, 'wb') as file_object:
-        file_object.write(file.file.read())
+        with open(local_path, 'wb') as file_object:
+            image = Image.open(file.file)
+            image = image.convert('RGB')
+            image.save(file_object, format='JPEG', quality=100)
+
+    elif file.filename.lower().endswith('jpg'):
+        file_name = random_img_filename('jpg')
+        local_path = IMG_DIR / file_name
+
+        with open(local_path, 'wb') as file_object:
+            file_object.write(file.file.read())
 
     return local_path
 
@@ -192,9 +193,6 @@ def detect_img(detector, path):
 
     result = {key: value.numpy() for key, value in result.items()}
 
-    # print("Found %d objects." % len(result["detection_scores"]))
-    # print("Inference time: ", end_time - start_time)
-
     res = result
 
 
@@ -222,3 +220,32 @@ def canny_edge_detection(img, kernel_size=5, low_threshold=50, high_threshold=10
     edge_img = cv2.bitwise_not(edge_img)
 
     return edge_img
+
+
+def canny_each_object(img):
+    '''
+    각 오브젝트별 Canny Edge Detection을 차등 적용하는 함수
+    '''
+
+    copy_img = img.copy()
+    copy_img = canny_edge_detection(copy_img, 5, 50, 100)
+    im_width, im_height = (Image.fromarray(np.uint8(img))).size
+
+    i = 0
+
+    while i < 100 and res['detection_scores'][i] >= 0.1:
+        ymin, xmin, ymax, xmax = res['detection_boxes'][i]
+        (left, right, bottom, top) = (int(xmin * im_width), ceil(xmax * im_width), int(ymin * im_height), ceil(ymax * im_height))
+
+        roi = img[bottom:top, left:right].copy()
+
+        if res['detection_class_entities'][i].decode() in lower_group:
+            edges = canny_edge_detection(roi, 5, 50, 100)
+        else:
+            edges = canny_edge_detection(roi, 5, 50, 200)
+
+        edges_resized = cv2.resize(edges, ((right - left), (top - bottom)))
+        copy_img[bottom:top, left:right] = edges_resized
+        i += 1
+
+    return copy_img
