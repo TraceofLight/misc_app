@@ -95,7 +95,7 @@ def get_image(file: UploadFile):
             image = image.convert('RGB')
             image.save(file_object, format='JPEG', quality=100)
 
-    elif file.filename.lower().endswith('jpg'):
+    elif file.filename.lower().endswith('jpg') or file.filename.lower().endswith('jpeg'):
         file_name = random_img_filename('jpg')
         local_path = IMG_DIR / file_name
 
